@@ -1,4 +1,4 @@
-
+"use client"
 import { Textarea } from "@nextui-org/react";
 const LeftSendIconButton = ({ disable }) => {
   return (

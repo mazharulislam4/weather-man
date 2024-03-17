@@ -1,7 +1,7 @@
 "use client";
 import Cookies from "js-cookie";
 import { postcodeValidator } from "postcode-validator";
-import data from "../../common.json";
+import data from "../common.json";
 
 import { DateTime } from "luxon";
 

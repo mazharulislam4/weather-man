@@ -14,12 +14,14 @@ import {
 } from "@nextui-org/react";
 import Cookies from "js-cookie";
 import Link from "next/link";
-import commonData from "../../../common.json";
+import commonData from "../../common.json";
 import Menu from "./menu";
 
 function SidebarContent() {
   const authState = useHookstate(firebaseAuth);
+  const activeUserRef = useHookstate(activeUserState);
   const activeUser = useHookstate(activeUserState).get({ noproxy: true });
+
   const isAuth = useAuth();
 
   const logoutHandler = async () => {
@@ -29,6 +31,7 @@ function SidebarContent() {
       .then((value) => {
         Cookies.remove(commonData.auth_cookie_name);
         sessionStorage.removeItem("__usr__");
+        activeUserRef.set({ user: {}, tokens: {} });
       })
       .catch((err) => {
         console.log(err);

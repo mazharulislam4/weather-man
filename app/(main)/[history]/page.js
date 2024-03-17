@@ -2,30 +2,28 @@
 import BodyContent from "@/components/body/bodyContent";
 import { getDataByHandler, getHandler } from "@/firebase/db";
 import { activeUserState } from "@/lib/ui";
-import ProtectedRoute from "@/protectedRoute";
+import WithAuthHOC from "@/withAuthHOC";
 import { useHookstate } from "@hookstate/core";
 import { useParams, useRouter } from "next/navigation";
-import { useLayoutEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 function History() {
   const params = useParams();
   const activeUser = useHookstate(activeUserState).get({ noproxy: true })?.user;
   const [constructData, setConstructData] = useState([]);
-  const router = useRouter(); 
+  const router = useRouter();
 
-
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (params?.history) {
       (async () => {
         try {
           const res = await getHandler(activeUser?.uid, params.history);
-
           const isValidParam = res?.find(
             (value) => value.handler === params.history
           );
 
           if (!isValidParam) {
-           router.push("/")
+            router.push("/");
           }
         } catch (err) {
           console.log(err);
@@ -34,8 +32,7 @@ function History() {
     }
   }, [params.history]);
 
-
-  useLayoutEffect(() => {
+  useEffect(() => {
     (async () => {
       try {
         const data = await getDataByHandler(params.history, activeUser?.uid);
@@ -55,20 +52,14 @@ function History() {
     })();
   }, [params.history]);
 
-
-
-
-
   return (
-    <ProtectedRoute>
-      <div
-        role="presentation"
-        className="h-full relative w-full flex flex-col overflow-hidden "
-      >
-        <BodyContent data={constructData} handler={params.history} />
-      </div>
-    </ProtectedRoute>
+    <div
+      role="presentation"
+      className="h-full relative w-full flex flex-col overflow-hidden "
+    >
+      <BodyContent data={constructData} handler={params.history} />
+    </div>
   );
 }
 
-export default History;
+export default WithAuthHOC(History);

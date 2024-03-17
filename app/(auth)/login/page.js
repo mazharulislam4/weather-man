@@ -2,7 +2,6 @@ import LoginForm from "@/components/form/loginForm";
 import PublicRoute from "@/publicRoute";
 import Link from "next/link";
 
-
 function LoginPage() {
   return (
     <PublicRoute>

@@ -1,9 +1,5 @@
 "use client";
-import {
-    isStrong,
-    secondToDate,
-    setCookie
-} from "@/utils/utils";
+import { isStrong, secondToDate, setCookie } from "@/utils/utils";
 import { Button, Input } from "@nextui-org/react";
 import { Formik } from "formik";
 // import Cookies from "js-cookie";
@@ -13,13 +9,11 @@ import { useState } from "react";
 // import { toast } from "react-toastify";
 // import ShortUniqueId from "short-unique-id";
 import { firebaseAuth } from "@/firebase/auth";
+import { activeUserState } from "@/lib/ui";
 import { useHookstate } from "@hookstate/core";
-import commonData from "../../../common.json";
-
 import * as Yup from "yup";
+import commonData from "../../common.json";
 import PasswordInput from "./passwordInput";
-
-
 // form validation
 const SignupSchema = Yup.object().shape({
   fullName: Yup.string()
@@ -54,16 +48,13 @@ function RegisterForm() {
   const toggleCPassVisibility = () => setIsCPassVisible(!isCPassVisible);
   const authState = useHookstate(firebaseAuth);
   const [resError, setErrors] = useState({ error: "" });
-
-
-
+  const activeUserStateRef = useHookstate(activeUserState);
 
   const submitHandler = async (values) => {
     const { signup } = authState.get({ noproxy: true }).auth;
 
     signup(values.fullName, values.email, values.password)
       .then((value) => {
-        
         if (value?.user) {
           const data = {
             ...value.user,
@@ -79,16 +70,29 @@ function RegisterForm() {
             data.uid
           );
 
+          const tokens = {
+            accessToke: data.accessToken,
+            refreshToken: data.refreshToken,
+            expiresIn: expiresIn,
+            data: data.uid,
+          };
+
+          const user = {
+            displayName: data.displayName,
+            email: data.email,
+            uid: data.uid,
+            photoURL: data.photoURL,
+            emailVerified: data.emailVerified,
+          };
+
           sessionStorage.setItem(
             "__usr__",
             JSON.stringify({
-              displayName: data.displayName,
-              email: data.email,
-              uid: data.uid,
-              photoURL: data.photoURL,
-              emailVerified: data.emailVerified,
+              user,
             })
           );
+
+          activeUserStateRef.set({ user: user, tokens: tokens });
 
           router.push("/");
         }

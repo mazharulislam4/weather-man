@@ -1,13 +1,14 @@
 "use client";
 import { signIn } from "@/firebase/auth";
-import { secondToDate, setCookie } from "@/utils/utils";
+import { activeUserState } from "@/lib/ui";
+import { secondToDate } from "@/utils/utils";
+import { useHookstate } from "@hookstate/core";
 import { Button, Input } from "@nextui-org/react";
 import { Formik } from "formik";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import * as Yup from "yup";
-import commonData from "../../../common.json";
 // form validation
 const SignupSchema = Yup.object().shape({
   email: Yup.string().email("Invalid email").required("Required"),
@@ -17,11 +18,11 @@ const SignupSchema = Yup.object().shape({
 function LoginForm() {
   const [resError, setErrors] = useState({ error: "" });
   const router = useRouter();
+  const activeUserStateRef = useHookstate(activeUserState);
+
   const submitHandler = async (values) => {
     try {
-      console.log(values);
       const res = await signIn(values.email, values.password);
-
 
       if (res?.user) {
         const data = {
@@ -30,24 +31,29 @@ function LoginForm() {
         };
         const expiresIn = secondToDate(data.expiresIn);
 
-        setCookie(
-          commonData.auth_cookie_name,
-          data.accessToken,
-          data.refreshToken,
-          expiresIn,
-          data.uid
-        );
+        const tokens = {
+          accessToke: data.accessToken,
+          refreshToken: data.refreshToken,
+          expiresIn: expiresIn,
+          data: data.uid,
+        };
+
+        const user = {
+          displayName: data.displayName,
+          email: data.email,
+          uid: data.uid,
+          photoURL: data.photoURL,
+          emailVerified: data.emailVerified,
+        };
 
         sessionStorage.setItem(
           "__usr__",
           JSON.stringify({
-            displayName: data.displayName,
-            email: data.email,
-            uid: data.uid,
-            photoURL: data.photoURL,
-            emailVerified: data.emailVerified,
+            user,
           })
         );
+
+        activeUserStateRef.set({ user: user, tokens: tokens });
 
         router.push("/");
       }

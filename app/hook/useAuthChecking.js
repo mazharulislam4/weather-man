@@ -8,16 +8,15 @@ import {
 } from "@/lib/ui";
 import { useHookstate } from "@hookstate/core";
 import Cookies from "js-cookie";
-import { useLayoutEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import commonData from "../../common.json";
 
 function useAuthChecking() {
-  const [isAuth, setIsAuth] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const activeUserStateRef = useHookstate(activeUserState);
   const activeCountryStateRef = useHookstate(activeCountryState);
 
-  
-  useLayoutEffect(() => {
+  useEffect(() => {
     const loggedIn = Cookies.get(commonData.auth_cookie_name);
 
     if (loggedIn) {
@@ -27,18 +26,22 @@ function useAuthChecking() {
       activeUserStateRef.set({ user: user, tokens: data });
 
       (async () => {
-        const currentLocationRes = await getCurrentUserLocation();
-        activeCountryStateRef.set(currentLocationRes?.country);
-        activeUserLocation.set({ location: { ...currentLocationRes } });
+        try {
+          const currentLocationRes = await getCurrentUserLocation();
+          activeCountryStateRef.set(currentLocationRes?.country);
+          activeUserLocation.set({ location: { ...currentLocationRes } });
+        } catch (err) {
+          setIsLoading(false);
+        }
       })();
     }
 
-    setIsAuth(true);
+    setIsLoading(false);
 
     return () => {};
   }, []);
 
-  return isAuth;
+  return isLoading;
 }
 
 export default useAuthChecking;

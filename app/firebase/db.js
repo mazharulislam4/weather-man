@@ -20,7 +20,6 @@ import { dbFireStore } from "./firebase";
 
 export const firestoreState = hookstate({ firestore: {} });
 
-
 export const createHandlerDocRef = (handler) => {
   if (!handler) {
     throw new Error({ error: true, msg: "handler must need!" });
@@ -112,17 +111,22 @@ export const getDataByHandler = async (handler, userUid) => {
 
   let data = { docRef: ref, handler: handler, list: [] };
   try {
-    firestoreState.set({
-      firestore: { docRef: ref, handler: handler },
-    });
-
     const res = await getDocs(query(ref, where("uid", "==", userUid)));
 
+    let list = [];
     res.forEach((doc) => {
       if (doc.exists()) {
-        data.list.push(doc.data());
+        list.push(doc.data());
       }
     });
+
+    const sorted = list?.sort(
+      (a, b) =>
+        a.timestamp.seconds -
+        b.timestamp.seconds 
+    );
+
+    data.list = sorted;
 
     return data;
   } catch (err) {

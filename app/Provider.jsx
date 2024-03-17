@@ -1,16 +1,13 @@
 "use client";
 import { NextUIProvider } from "@nextui-org/react";
-import InitialLoader from "./components/loader/initialLoader";
-import useAuthChecking from "./hook/useAuthChecking";
+import { AuthCheckProvider } from "./context/authContext";
 
 function Provider({ children }) {
-  const authChecking = useAuthChecking();
-
-  if (!authChecking) {
-    return <InitialLoader />;
-  }
-
-  return <NextUIProvider>{children}</NextUIProvider>;
+  return (
+    <NextUIProvider>
+      <AuthCheckProvider>{children}</AuthCheckProvider>
+    </NextUIProvider>
+  );
 }
 
 export default Provider;

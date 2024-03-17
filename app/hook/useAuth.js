@@ -1,13 +1,13 @@
 "use client";
+import { getAuthCheck } from "@/context/authContext";
 import { activeUserState } from "@/lib/ui";
 import { useHookstate } from "@hookstate/core";
 
 function useAuth() {
-  const activeUser = useHookstate(activeUserState).get({
-    noproxy: true,
-  })?.tokens;
 
-  if (activeUser?.accessToken) {
+  const { authData } = getAuthCheck();
+
+  if (Object.keys(authData).length > 0 && authData?.tokens?.accessToken) {
     return true;
   }
 

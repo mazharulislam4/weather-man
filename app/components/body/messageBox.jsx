@@ -1,3 +1,4 @@
+"use client"
 import { Avatar, AvatarIcon } from "@nextui-org/react";
 import he from "he";
 import { forwardRef } from "react";
@@ -22,6 +23,10 @@ const PCICON = () => {
 };
 
 function MessageBox({ data, isLoading, isError }, ref) {
+
+
+  
+
   return (
     <div
       ref={ref}

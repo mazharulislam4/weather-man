@@ -1,21 +1,19 @@
-"use client";
-
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useLayoutEffect } from "react";
 import useAuth from "./hook/useAuth";
 
-function WithAuthHOC(Copmonent) {
+function WithAuthHOC(Component) {
   return function AuthenticComponent(props) {
     const isAuth = useAuth();
-
+    const router = useRouter();
     useLayoutEffect(() => {
       if (!isAuth) {
-        return redirect("/login");
+        return router.replace("/login");
       }
       return () => {};
-    }, [isAuth]);
+    }, [ ]);
 
-    return <Copmonent {...props} />;
+    return <Component {...props} /> ;
   };
 }
 

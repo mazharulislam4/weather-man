@@ -1,3 +1,5 @@
+"use client"
+
 import RegisterForm from "@/components/form/registerForm";
 import PublicRoute from "@/publicRoute";
 import Link from "next/link";

@@ -12,8 +12,6 @@ export const metadata = {
   description: "Get weather information from prompt",
 };
 
-
-
 export default function RootLayout({ children }) {
   return (
     <html lang="en">

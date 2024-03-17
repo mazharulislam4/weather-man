@@ -29,9 +29,12 @@ function BodyContent({ data, handler }) {
   const activeUser = useHookstate(activeUserState).get({ noproxy: true });
   const urlPath = usePathname();
 
+
+  
   if (Object.keys(docRef).length === 0 && handler) {
     docRef.handler = handler;
   }
+
 
   useEffect(() => {
     if (data) {
@@ -230,7 +233,7 @@ function BodyContent({ data, handler }) {
               ))
             )
           ) : urlPath === "/" ? (
-            <div className="w-full my-[20%] ">
+            <div className="w-full mt-[15%] ">
               <CurrentWeather />
             </div>
           ) : (
@@ -240,7 +243,7 @@ function BodyContent({ data, handler }) {
       </div>
 
       <div className="flex-shrink-0 w-full">
-        <div className="pb-6 px-3 max-w-[50rem] mx-auto">
+        <div className="pb-12 px-3 max-w-[50rem] mx-auto">
           <UserInput
             changeHandler={inputChangeHandler}
             value={userInput}
