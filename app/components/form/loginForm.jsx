@@ -1,6 +1,9 @@
 "use client";
 import { signIn } from "@/firebase/auth";
+import { activeUserState } from "@/lib/ui";
+
 import { secondToDate, setCookie } from "@/utils/utils";
+import { useHookstate } from "@hookstate/core";
 import { Button, Input } from "@nextui-org/react";
 import { Formik } from "formik";
 import Link from "next/link";
@@ -14,14 +17,16 @@ const SignupSchema = Yup.object().shape({
   password: Yup.string().required("Required"),
 });
 
+
+
 function LoginForm() {
   const [resError, setErrors] = useState({ error: "" });
   const router = useRouter();
+  const activeUserStateRef = useHookstate(activeUserState);
+
   const submitHandler = async (values) => {
     try {
-      console.log(values);
       const res = await signIn(values.email, values.password);
-
 
       if (res?.user) {
         const data = {
@@ -30,24 +35,38 @@ function LoginForm() {
         };
         const expiresIn = secondToDate(data.expiresIn);
 
-        setCookie(
-          commonData.auth_cookie_name,
-          data.accessToken,
-          data.refreshToken,
-          expiresIn,
-          data.uid
-        );
+        const tokens = {
+          accessToken: data.accessToken,
+          refreshToken: data.refreshToken,
+          expiresIn: expiresIn,
+          uid: data.uid,
+        };
 
-        sessionStorage.setItem(
+          setCookie(
+            commonData.auth_cookie_name,
+            tokens.accessToken,
+            tokens.refreshToken,
+            expiresIn,
+            tokens.uid
+          );
+
+
+        const user = {
+          displayName: data.displayName,
+          email: data.email,
+          uid: data.uid,
+          photoURL: data.photoURL,
+          emailVerified: data.emailVerified,
+        };
+
+        localStorage.setItem(
           "__usr__",
           JSON.stringify({
-            displayName: data.displayName,
-            email: data.email,
-            uid: data.uid,
-            photoURL: data.photoURL,
-            emailVerified: data.emailVerified,
+            user,
           })
         );
+
+        activeUserStateRef.set({ user: user, tokens: tokens });
 
         router.push("/");
       }

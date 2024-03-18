@@ -146,6 +146,10 @@ img {
     background-color: var(--primary-color);
     margin-block: 40px;
   }
+
+  .container {
+    @apply mx-auto px-4;
+  }
 }
 
 .navlink-active {

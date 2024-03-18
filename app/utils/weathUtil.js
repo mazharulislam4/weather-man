@@ -1,3 +1,10 @@
+import { hookstate } from "@hookstate/core";
+
+export const temUnitState = hookstate({c: true , f: false});
+
+
+
+
 // Constants for calculating the heat index
 const c1 = -8.78469475556;
 const c2 = 1.61139411;

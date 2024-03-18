@@ -12,33 +12,38 @@ import { useLayoutEffect, useState } from "react";
 import commonData from "../../common.json";
 
 function useAuthChecking() {
-  const [isAuth, setIsAuth] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const activeUserStateRef = useHookstate(activeUserState);
   const activeCountryStateRef = useHookstate(activeCountryState);
 
-  
   useLayoutEffect(() => {
     const loggedIn = Cookies.get(commonData.auth_cookie_name);
 
     if (loggedIn) {
       const data = JSON.parse(loggedIn);
-      let user = sessionStorage.getItem("__usr__");
+      let user = localStorage.getItem("__usr__");
       user ? (user = JSON.parse(user)) : {};
       activeUserStateRef.set({ user: user, tokens: data });
+    }
+    setIsLoading(false);
 
-      (async () => {
+    (async () => {
+      try {
         const currentLocationRes = await getCurrentUserLocation();
         activeCountryStateRef.set(currentLocationRes?.country);
         activeUserLocation.set({ location: { ...currentLocationRes } });
-      })();
-    }
+        setIsLoading(false);
+      } catch (err) {
+        console.log(err);
+        setIsLoading(false);
+      } finally {
+      }
+    })();
 
-    setIsAuth(true);
-
-    return () => {};
+    setIsLoading(false);
   }, []);
 
-  return isAuth;
+  return isLoading;
 }
 
 export default useAuthChecking;

@@ -1,11 +1,15 @@
 "use client";
 import { getWeather } from "@/lib/getWeather";
 import { activeUserLocation } from "@/lib/ui";
-import { convertUnixToLocalTimeString } from "@/utils/utils";
+import {
+  celsiusToFahrenheit,
+  convertUnixToLocalTimeString
+} from "@/utils/utils";
 import {
   calculateDewPoint,
   convertWindSpeedToKmh,
   getWindDirection,
+  temUnitState,
 } from "@/utils/weathUtil";
 import { useHookstate } from "@hookstate/core";
 import { Spinner } from "@nextui-org/react";
@@ -21,6 +25,7 @@ function CurrentWeather() {
   const locationData = locationDataState.get({ noproxy: true }).location;
   const [currentWeather, setCurrentWeather] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const temUnit = useHookstate(temUnitState).get({ noproxy: true });
 
   useEffect(() => {
     if (Object.keys(locationData).length > 0) {
@@ -42,15 +47,15 @@ function CurrentWeather() {
         } catch (err) {
           console.log(err);
           setIsLoading(false);
-        }finally{
-          setIsLoading(false)
+        } finally {
+          setIsLoading(false);
         }
       })();
     }
   }, [locationData]);
 
   return (
-    <div className="bg-background flex flex-col gap-3 py-4 px-3 rounded-lg">
+    <div className="bg-background flex flex-col gap-3 py-4 px-3 rounded-lg border border-gray-200">
       <div className="flex justify-between items-center">
         <div className="flex flex-col">
           <span className="text-xl block  mb-2 font-bold">Current Weather</span>
@@ -78,15 +83,23 @@ function CurrentWeather() {
             </figure>
           )}
           <span className="text-[2.5rem]">
-            {currentWeather?.main?.temp?.toFixed("2")}&#176;
-            <sub className="text-xl text-gray-500">C</sub>{" "}
+            {temUnit?.f
+              ? celsiusToFahrenheit(
+                  Number(currentWeather?.main?.temp?.toFixed("2"))
+                ).toFixed(2)
+              : currentWeather?.main?.temp?.toFixed("2")}
+            {temUnit?.f ? <>&#8457;</> : <>&#8451;</>}
           </span>
         </div>
         <div className="flex flex-col gap-1">
           <span className="font-medium">
             Real Feel: &nbsp;
-            {currentWeather?.main?.feels_like?.toFixed("2")}
-            &#176;
+            {temUnit?.f
+              ? celsiusToFahrenheit(
+                  Number(currentWeather?.main?.feels_like?.toFixed("2"))
+                ).toFixed(2)
+              : currentWeather?.main?.feels_like?.toFixed("2")}
+            {temUnit?.f ? <>&#8457;</> : <>&#8451;</>}
           </span>
           <span className="font-medium">
             Clouds Cover: {currentWeather?.clouds?.all}%
@@ -117,7 +130,7 @@ function CurrentWeather() {
       {/* weather conditions  */}
       <div className="flex gap-3 text-md">
         <ul className="w-1/2">
-          <li className="flex relative justify-between items-center border-b border-b-gray py-2 px-3 text-foreground">
+          <li className="flex relative justify-between items-center border-b border-b-gray  py-4 px-3 text-foreground">
             <span>Wind</span>
             <span>
               {getWindDirection(currentWeather?.wind?.deg)}
@@ -126,7 +139,7 @@ function CurrentWeather() {
               <UnitText>km/h</UnitText>
             </span>
           </li>
-          <li className="flex justify-between items-center border-b border-b-gray py-2 px-3 text-foreground">
+          <li className="flex justify-between items-center border-b border-b-gray  py-4 px-3 text-foreground">
             <span>Wind Gusts</span>
             <span>
               {getWindDirection(currentWeather?.wind?.deg)}
@@ -135,7 +148,7 @@ function CurrentWeather() {
               <UnitText>km/h</UnitText>
             </span>
           </li>
-          <li className="flex justify-between items-center border-b border-b-gray py-2 px-3 text-foreground">
+          <li className="flex justify-between items-center   py-4 px-3 text-foreground">
             <span>Humidity</span>
             <span>
               {currentWeather?.main?.humidity}
@@ -144,7 +157,7 @@ function CurrentWeather() {
           </li>
         </ul>
         <ul className="w-1/2">
-          <li className="flex justify-between items-center border-b border-b-gray py-2 px-3 text-foreground">
+          <li className="flex justify-between items-center border-b border-b-gray  py-4 px-3 text-foreground">
             <span>Dew Point</span>
             <span>
               {calculateDewPoint(
@@ -154,7 +167,7 @@ function CurrentWeather() {
               &#176;
             </span>
           </li>
-          <li className="flex justify-between items-center border-b border-b-gray py-2 px-3 text-foreground">
+          <li className="flex justify-between items-center border-b border-b-gray  py-4 px-3 text-foreground">
             <span>Pressure</span>
             <span>
               <UnitText>↓</UnitText>
@@ -162,7 +175,7 @@ function CurrentWeather() {
               <UnitText>mb</UnitText>
             </span>
           </li>
-          <li className="flex justify-between items-center  py-2 px-3 border-b border-b-gray text-foreground">
+          <li className="flex justify-between items-center  py-4 px-3   text-foreground">
             <span>Visibility</span>
             <span>
               {currentWeather?.visibility / 1000} <UnitText>km</UnitText>

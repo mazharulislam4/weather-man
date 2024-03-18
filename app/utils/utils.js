@@ -92,3 +92,12 @@ export function convertUnixToLocalTimeString(unixTimestamp) {
 
 
 
+// Function to convert Celsius to Fahrenheit
+export function celsiusToFahrenheit(celsius) {
+  return (celsius * 9/5) + 32;
+}
+
+// Function to convert Fahrenheit to Celsius
+export function fahrenheitToCelsius(fahrenheit) {
+  return (fahrenheit - 32) * 5/9;
+}

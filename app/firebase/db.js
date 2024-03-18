@@ -110,11 +110,9 @@ export const getDataByHandler = async (handler, userUid) => {
 
   const ref = collection(dbFireStore, "chats", "conversation", handler);
 
-  let data = { docRef: ref, handler: handler, list: [] };
+  let data = { list: [] };
   try {
-    firestoreState.set({
-      firestore: { docRef: ref, handler: handler },
-    });
+
 
     const res = await getDocs(query(ref, where("uid", "==", userUid)));
 

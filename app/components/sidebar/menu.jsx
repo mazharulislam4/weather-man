@@ -16,7 +16,7 @@ function Menu() {
 
   useEffect(() => {
     (async () => {
-      const list = await getSidebarAllData(activeUser?.user?.uid);
+      const list = await getSidebarAllData(activeUser?.tokens?.uid);
 
       if (list?.length > 0) {
         sidebarListStateRef.set({ list: list });
@@ -24,18 +24,21 @@ function Menu() {
     })();
 
     return () => {};
-  }, []);
+  }, [activeUser.tokens.uid]);
+
+  console.log(activeUser);
 
   return (
     <ul className="mt-[10px] flex flex-col gap-1">
       <li>
         <Link
           href={"/"}
-          className={`hover:bg-background py-2 px-2 justify-between items-center rounded-md cursor-pointer text-medium font-medium flex relative top-0 mb-4 ${generateActiveClass(
+          className={`hover:bg-background py-2 px-2 justify-between items-center rounded-md text-medium font-medium flex relative top-0 mb-4 ${generateActiveClass(
             `/`,
             pathname,
             "navlink-active"
           )}  `}
+          prefetch={false}
         >
           <span>Home</span>
           <svg

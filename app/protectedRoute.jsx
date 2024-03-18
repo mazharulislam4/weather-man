@@ -1,15 +1,15 @@
 "use client";
 
-import { redirect } from "next/navigation";
-import { useLayoutEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import useAuth from "./hook/useAuth";
 
-export default function ProtectedRoute({children}) {
+export default function ProtectedRoute({ children }) {
+  const router = useRouter();
   const isAuth = useAuth();
-
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (!isAuth) {
-      return redirect("/login");
+      return router.replace("/login", { shallow: true });
     }
     return () => {};
   }, [isAuth]);

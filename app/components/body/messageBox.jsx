@@ -1,3 +1,5 @@
+
+"use client"
 import { Avatar, AvatarIcon } from "@nextui-org/react";
 import he from "he";
 import { forwardRef } from "react";

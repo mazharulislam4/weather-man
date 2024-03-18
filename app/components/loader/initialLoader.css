@@ -65,7 +65,7 @@
 }
 
 .loader-text:after {
-  content: "Auth checking";
+  content: "Loading";
   font-weight: bold;
   animation: loading-text 3s infinite;
 }
@@ -90,18 +90,18 @@
 
 @keyframes loading-text {
   0% {
-    content: "Auth checking";
+    content: "Loading";
   }
 
   25% {
-    content: "Auth checking.";
+    content: "Loading.";
   }
 
   50% {
-    content: "Auth checking..";
+    content: "Loading..";
   }
 
   75% {
-    content: "Auth checking...";
+    content: "Loading...";
   }
 }

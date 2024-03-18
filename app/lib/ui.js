@@ -1,11 +1,10 @@
-import { convertUnixToLocalTimeString } from "@/utils/utils";
+import { celsiusToFahrenheit, convertUnixToLocalTimeString } from "@/utils/utils";
 import {
   calculateDewPoint,
   convertWindSpeedToKmh,
   getWindDirection,
 } from "@/utils/weathUtil";
 import { hookstate } from "@hookstate/core";
-
 export const generateActiveClass = (href, path, className) => {
   if (href === path) {
     return className;
@@ -19,7 +18,7 @@ export const generateActiveClass = (href, path, className) => {
 
 // get user weather zip input
 export const userZipInput = hookstate({ zip: "" });
-export const activeUserState = hookstate({user: {} , tokens: {}})
+export const activeUserState = hookstate({ user: {}, tokens: {} });
 export const activeCountryState = hookstate("");
 export const activeUserLocation = hookstate({ location: {} });
 export const sidebarListState = hookstate({ list: [] });
@@ -27,8 +26,6 @@ export const currentHandlerState = hookstate({ handler: null });
 /**
  * Global data sets  end
  */
-
-
 
 // get user IP address
 export const getUserIP = async () => {
@@ -57,7 +54,7 @@ export const getCurrentUserLocation = async () => {
 };
 
 // html weather response string
-export const getWeatherResponseHTML = ({ data, errorData }) => {
+export const getWeatherResponseHTML = ({ data, errorData }, unit) => {
   let html = "";
   if (data?.length > 0) {
     data.map((value) => {
@@ -78,13 +75,27 @@ export const getWeatherResponseHTML = ({ data, errorData }) => {
       <span>
         Temperature:
         <span class="font-medium">
-          ${value?.main?.temp?.toFixed("2")}&#x2103;
+               ${
+                 unit == "f"
+                   ? celsiusToFahrenheit(
+                       Number(value?.main?.temp?.toFixed("2"))
+                     ).toFixed(2)
+                   : value?.main?.temp?.toFixed("2")
+               }
+            ${unit == "f" ? "&#8457;" : "&#8451;"}
         </span>
       </span>
       <span>
         Feel Like:
         <span class="font-medium">
-          ${value?.main?.feels_like?.toFixed("2")}&#x2103;
+               ${
+                 unit == "f"
+                   ? celsiusToFahrenheit(
+                       Number(value?.main?.feels_like?.toFixed("2"))
+                     ).toFixed(2)
+                   : value?.main?.feels_like?.toFixed("2")
+               }
+            ${unit == "f" ? "<span>&#8457;</span>" : "<span>&#8451;</span>"}
         </span>
       </span>
       <span>

@@ -1,20 +1,20 @@
 "use client";
 
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useLayoutEffect } from "react";
 import useAuth from "./hook/useAuth";
 
 function PublicRoute({ children }) {
   const isAuth = useAuth();
-
+  const router = useRouter();
   useLayoutEffect(() => {
     if (isAuth) {
-       redirect("/h");
+      return router.replace("/" , {shallow: true});
     }
     return () => {};
   }, [isAuth]);
 
-  return children;
+  return children 
 }
 
 export default PublicRoute;

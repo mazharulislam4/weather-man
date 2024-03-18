@@ -9,7 +9,7 @@ import { useLayoutEffect, useState } from "react";
 
 function History() {
   const params = useParams();
-  const activeUser = useHookstate(activeUserState).get({ noproxy: true })?.user;
+  const activeUser = useHookstate(activeUserState).get({ noproxy: true })?.tokens;
   const [constructData, setConstructData] = useState([]);
   const router = useRouter(); 
 

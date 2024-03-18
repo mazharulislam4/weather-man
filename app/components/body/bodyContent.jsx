@@ -7,6 +7,7 @@ import {
   getWeatherResponseHTML,
 } from "@/lib/ui";
 import { getZipCodeFromPrompt, validateZipCode } from "@/utils/utils";
+import { temUnitState } from "@/utils/weathUtil";
 import { useHookstate } from "@hookstate/core";
 import escapeHTML from "escape-html";
 import { usePathname } from "next/navigation";
@@ -28,6 +29,7 @@ function BodyContent({ data, handler }) {
   let docRef = firestoreStateRef.get({ noproxy: true })?.firestore;
   const activeUser = useHookstate(activeUserState).get({ noproxy: true });
   const urlPath = usePathname();
+  const tempUnit = useHookstate(temUnitState).get({ noproxy: true });
 
   if (Object.keys(docRef).length === 0 && handler) {
     docRef.handler = handler;
@@ -137,14 +139,22 @@ function BodyContent({ data, handler }) {
             responses = [...responses, { ...res, zip: value.code }];
           }
 
-          const contentHTML = escapeHTML(
-            getWeatherResponseHTML({
-              data: responses,
-              errorData: inValidCodesObj,
-            })
-          );
+          if (responses.length > 0 && responses[0]?.res?.main) {
+            const contentHTML = escapeHTML(
+              getWeatherResponseHTML(
+                {
+                  data: responses,
+                  errorData: inValidCodesObj,
+                },
+                tempUnit?.f ? "f" : ""
+              )
+            );
 
-          systemRes.content = contentHTML;
+            systemRes.content = contentHTML;
+          } else {
+            systemRes.content = "Not found!";
+          }
+
           systemRes.isRendering = false;
           setMessageData([
             ...messageData,
@@ -184,11 +194,11 @@ function BodyContent({ data, handler }) {
         return toast.error("There is an error occurred  !");
       }
 
-      if (Object.keys(activeUser).length === 0 && !activeUser?.user?.uid) {
+      if (Object.keys(activeUser).length === 0 && !activeUser?.tokens?.uid) {
         return toast.error("There is an error occurred ! reload the page");
       }
 
-      return await addData(docRef, data, activeUser?.user);
+      return await addData(docRef, data, activeUser?.tokens);
     } catch (err) {
       console.log(err);
     }
@@ -211,12 +221,12 @@ function BodyContent({ data, handler }) {
         ref={parentRef}
       >
         <div className="w-full sticky top-0 shadow-sm  z-50 bg-background ">
-          <div className="container py-2">
+          <div className=" md:px-10 py-4 px-3">
             <Navbar />
           </div>
         </div>
 
-        <div className="max-w-[50rem] h-auto relative mx-auto z-0 pt-3  pb-10 flex flex-col gap-65">
+        <div className="max-w-[50rem] h-auto relative mx-auto z-0 pt-3  pb-14 flex flex-col gap-65">
           {messageData.length > 0 ? (
             messageData.map((value) =>
               value?.message?.map((data, index) => (
@@ -230,7 +240,7 @@ function BodyContent({ data, handler }) {
               ))
             )
           ) : urlPath === "/" ? (
-            <div className="w-full my-[20%] ">
+            <div className="w-full my-[8%] container ">
               <CurrentWeather />
             </div>
           ) : (
@@ -240,7 +250,7 @@ function BodyContent({ data, handler }) {
       </div>
 
       <div className="flex-shrink-0 w-full">
-        <div className="pb-6 px-3 max-w-[50rem] mx-auto">
+        <div className="pb-14 px-3 max-w-[50rem] mx-auto">
           <UserInput
             changeHandler={inputChangeHandler}
             value={userInput}

@@ -10,17 +10,32 @@ import {
   currentHandlerState,
   sidebarListState,
 } from "@/lib/ui";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+
 
 function HomePage() {
   const firestoreStateRef = useHookstate(firestoreState);
   const sidebarListStateRef = useHookstate(sidebarListState);
-  const activeUser = useHookstate(activeUserState).get();
+  const activeUser = useHookstate(activeUserState).get({noproxy: true});
   const docRef = firestoreStateRef.get({ noproxy: true })?.firestore;
-
   const currentHandler = useHookstate(currentHandlerState).get({
     noproxy: true,
   })?.handler;
+
+
+
+const [keyChange , setKeychange] = useState(0); 
+
+
+
+useEffect(()=>{
+
+ 
+  setKeychange((prev)=> prev +=1)
+
+}, [])
+
+
 
   useEffect(() => {
     if (!docRef?.docRef) {
@@ -31,6 +46,10 @@ function HomePage() {
       createHandlerDocRef(uuid);
     }
   }, [docRef]);
+
+
+
+
 
   useEffect(() => {
     if (currentHandler) {
@@ -54,10 +73,11 @@ function HomePage() {
   }, [currentHandler]);
 
   return (
-    <ProtectedRoute>
+    <ProtectedRoute  key={keyChange}>
       <div
         role="presentation"
         className="h-full relative w-full flex flex-col overflow-hidden "
+      
       >
         <BodyContent />
       </div>

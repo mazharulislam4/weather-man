@@ -13,16 +13,16 @@ export default function AuthLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${inter.className} bg-slate-100 h-screen`}>
-        <Provider>
-          <header className="bg-transparent">
-            <div className="container">
-              <div className="py-4 px-3 text-center ">
-                <Logo />
+          <Provider>
+            <header className="bg-transparent">
+              <div className="container">
+                <div className="py-4 px-3 text-center ">
+                  <Logo />
+                </div>
               </div>
-            </div>
-          </header>
-          <main className="w-full h-auto">{children}</main>
-        </Provider>
+            </header>
+            <main className="w-full h-auto">{children}</main>
+          </Provider>
       </body>
     </html>
   );

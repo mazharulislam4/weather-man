@@ -14,6 +14,7 @@ import {
 } from "@nextui-org/react";
 import Cookies from "js-cookie";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import commonData from "../../../common.json";
 import Menu from "./menu";
 
@@ -21,6 +22,7 @@ function SidebarContent() {
   const authState = useHookstate(firebaseAuth);
   const activeUser = useHookstate(activeUserState).get({ noproxy: true });
   const isAuth = useAuth();
+const router = useRouter()
 
   const logoutHandler = async () => {
     const { logout } = authState.get({ noproxy: true })?.auth;
@@ -28,7 +30,8 @@ function SidebarContent() {
     logout()
       .then((value) => {
         Cookies.remove(commonData.auth_cookie_name);
-        sessionStorage.removeItem("__usr__");
+        localStorage.removeItem("__usr__");
+        router.replace("/login");
       })
       .catch((err) => {
         console.log(err);
