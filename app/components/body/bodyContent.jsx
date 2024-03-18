@@ -139,7 +139,9 @@ function BodyContent({ data, handler }) {
             responses = [...responses, { ...res, zip: value.code }];
           }
 
-          if (responses.length > 0 && responses[0]?.res?.main) {
+          console.log(responses);
+
+          if (responses.length > 0 && responses[0]?.main) {
             const contentHTML = escapeHTML(
               getWeatherResponseHTML(
                 {
